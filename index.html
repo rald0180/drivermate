@@ -84,10 +84,21 @@
       cursor: pointer;
       transition: background 0.2s;
       text-decoration: none;
+      font-size: 1rem;
     }
 
-    .btn:hover {
+    .btn:hover, .btn:focus {
       background-color: #2563eb;
+      outline: none;
+    }
+
+    .btn-secondary {
+      background: var(--muted);
+      color: white;
+      margin-left: 0.5rem;
+    }
+    .btn-secondary:hover, .btn-secondary:focus {
+      background: #334155;
     }
 
     .grid {
@@ -122,6 +133,56 @@
       font-size: 0.9rem;
       color: var(--muted);
       padding: 2rem 1rem;
+    }
+
+    /* Consent Modal Styles */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.28);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-backdrop.active {
+      display: flex;
+    }
+    .modal {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 2rem 1.2rem 1.2rem 1.2rem;
+      max-width: 340px;
+      width: 92vw;
+      box-shadow: var(--shadow);
+      position: relative;
+      animation: modalIn 0.18s;
+      text-align: center;
+    }
+    @keyframes modalIn {
+      from { transform: translateY(40px) scale(0.97); opacity: 0; }
+      to   { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .modal-close {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .modal-header {
+      font-weight: bold;
+      font-size: 1.08rem;
+      margin-bottom: 1.1rem;
+      color: var(--primary);
+      text-align: center;
+    }
+    @media (max-width: 500px) {
+      .modal { padding: 1.2rem 0.5rem 1.1rem 0.5rem; }
     }
   </style>
 </head>
@@ -177,12 +238,62 @@
     </div>
   </div>
 
+  <!-- Consent Modal -->
+  <div class="modal-backdrop" id="consent-modal" tabindex="-1">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="consent-title">
+      <button class="modal-close" id="close-consent" aria-label="Close">&times;</button>
+      <div class="modal-header" id="consent-title">
+        Download Payslip
+      </div>
+      <div style="margin-bottom:1.2rem;">
+        Do you want to download your payslip as a PDF?
+      </div>
+      <button class="btn" id="consent-yes">Yes</button>
+      <button class="btn btn-secondary" id="consent-no">No</button>
+    </div>
+  </div>
+
   <footer>
     &copy; 2025 DriveMate. All rights reserved.
   </footer>
   <script>
-    // Generate PDF payslip on button click using jsPDF
-    document.getElementById('btn-payslip').addEventListener('click', function() {
+    // Modal elements
+    const payslipBtn = document.getElementById('btn-payslip');
+    const consentModal = document.getElementById('consent-modal');
+    const closeConsent = document.getElementById('close-consent');
+    const consentYes = document.getElementById('consent-yes');
+    const consentNo = document.getElementById('consent-no');
+
+    // Show modal on button click
+    payslipBtn.addEventListener('click', function() {
+      consentModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      consentYes.focus();
+    });
+
+    function closeModal() {
+      consentModal.classList.remove('active');
+      document.body.style.overflow = '';
+      payslipBtn.focus();
+    }
+
+    closeConsent.addEventListener('click', closeModal);
+    consentNo.addEventListener('click', closeModal);
+
+    consentModal.addEventListener('click', function(e){
+      if(e.target === consentModal) closeModal();
+    });
+
+    document.addEventListener('keydown', function(e){
+      if(consentModal.classList.contains('active') && e.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    // Yes: Generate PDF
+    consentYes.addEventListener('click', function() {
+      closeModal();
+      // Generate PDF payslip using jsPDF
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
 

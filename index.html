@@ -14,6 +14,7 @@
       --text: #1f2937;
       --muted: #6b7280;
       --danger: #ef4444;
+      --success: #10b981;
       --radius: 12px;
       --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
@@ -84,6 +85,11 @@
       text-align: center;
       font-size: 0.95rem;
       margin-top: 0.5rem;
+      transition: background 0.2s;
+    }
+    .btn:disabled {
+      background: var(--muted);
+      cursor: default;
     }
     .essentials-grid {
       display: grid;
@@ -116,6 +122,89 @@
       margin-top: 0.5rem;
       text-align: center;
     }
+    /* Modal Styles */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.25);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-backdrop.active {
+      display: flex;
+    }
+    .modal {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.2rem;
+      max-width: 340px;
+      width: 90vw;
+      box-shadow: var(--shadow);
+      position: relative;
+      animation: modalIn 0.22s;
+    }
+    @keyframes modalIn {
+      from { transform: translateY(30px) scale(0.97); opacity: 0; }
+      to   { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .modal-close {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .modal-header {
+      font-weight: bold;
+      font-size: 1.15rem;
+      margin-bottom: 0.7rem;
+      color: var(--primary);
+    }
+    .payslip-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+    .payslip-table th,
+    .payslip-table td {
+      text-align: left;
+      padding: 0.35rem 0.3rem;
+    }
+    .payslip-table th {
+      color: var(--muted);
+      font-weight: normal;
+      font-size: 0.93rem;
+    }
+    .payslip-table tr.total-row td {
+      font-weight: bold;
+      color: var(--primary);
+    }
+    .success-msg {
+      background: var(--success);
+      color: white;
+      border-radius: var(--radius);
+      padding: 0.7rem 1rem;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      display: none;
+      margin-top: 0.5rem;
+    }
+    .success-msg.active {
+      display: block;
+      animation: fadeIn 0.25s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0;}
+      to { opacity: 1;}
+    }
   </style>
 </head>
 <body>
@@ -127,7 +216,7 @@
       <div class="card">
         <div class="card-title">This Week's Pay</div>
         <div style="font-size: 1.2rem; font-weight: bold;">$880.50</div>
-        <button class="btn">View Payslip</button>
+        <button class="btn" id="btn-payslip">View Payslip</button>
       </div>
       <div class="card">
         <div class="card-title">Today's Hours</div>
@@ -173,7 +262,13 @@
 
     <section class="screen" id="screen-hours">
       <div class="card"><div class="card-title">Work Hours</div>Logged: 40 hours this week</div>
-      <div class="card"><div class="card-title">Shift Tracker</div><button class="btn">Start Shift</button></div>
+      <div class="card">
+        <div class="card-title">Shift Tracker</div>
+        <button class="btn" id="btn-shift">Start Shift</button>
+        <div id="shift-success" class="success-msg">
+          <i class="fas fa-check-circle"></i> Shift started at <span id="shift-time"></span>
+        </div>
+      </div>
     </section>
 
     <section class="screen" id="screen-updates">
@@ -193,10 +288,43 @@
     <div class="tab" data-screen="profile"><i class="fas fa-user"></i><br>Profile</div>
   </nav>
 
+  <!-- Payslip Modal -->
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" id="modal-payslip">
+      <button class="modal-close" id="close-payslip" aria-label="Close">&times;</button>
+      <div class="modal-header">Payslip (Week 22)</div>
+      <table class="payslip-table">
+        <tr>
+          <th>Date Range:</th>
+          <td>May 13 – May 19, 2025</td>
+        </tr>
+        <tr>
+          <th>Base Pay:</th>
+          <td>$720.00</td>
+        </tr>
+        <tr>
+          <th>Bonuses:</th>
+          <td>$120.50</td>
+        </tr>
+        <tr>
+          <th>Deductions:</th>
+          <td>-$60.00</td>
+        </tr>
+        <tr class="total-row">
+          <td>Total Pay:</td>
+          <td>$880.50</td>
+        </tr>
+      </table>
+      <div style="font-size: 0.98rem; color: var(--muted); text-align:center;">
+        For more details, visit the HR portal or contact your manager.
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Tab navigation
     const tabs = document.querySelectorAll('.tab');
     const screens = document.querySelectorAll('.screen');
-
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         tabs.forEach(t => t.classList.remove('active'));
@@ -205,7 +333,55 @@
         document.getElementById('screen-' + tab.dataset.screen).classList.add('active');
       });
     });
-    // openMap function is no longer needed
+
+    // Payslip modal
+    const payslipBtn = document.getElementById('btn-payslip');
+    const payslipModal = document.getElementById('modal-backdrop');
+    const closePayslip = document.getElementById('close-payslip');
+
+    payslipBtn.addEventListener('click', function() {
+      payslipModal.classList.add('active');
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+      closePayslip.focus();
+    });
+    closePayslip.addEventListener('click', function() {
+      payslipModal.classList.remove('active');
+      document.body.style.overflow = '';
+      payslipBtn.focus();
+    });
+    // Optional: Close modal with ESC or click on backdrop
+    payslipModal.addEventListener('click', function(e){
+      if(e.target === payslipModal) {
+        payslipModal.classList.remove('active');
+        document.body.style.overflow = '';
+        payslipBtn.focus();
+      }
+    });
+    document.addEventListener('keydown', function(e){
+      if(payslipModal.classList.contains('active') && e.key === 'Escape') {
+        payslipModal.classList.remove('active');
+        document.body.style.overflow = '';
+        payslipBtn.focus();
+      }
+    });
+
+    // Start Shift button functionality
+    const shiftBtn = document.getElementById('btn-shift');
+    const shiftSuccess = document.getElementById('shift-success');
+    const shiftTime = document.getElementById('shift-time');
+
+    shiftBtn.addEventListener('click', function(){
+      const now = new Date();
+      const pad = n => n < 10 ? '0'+n : n;
+      const hours = pad(now.getHours());
+      const mins = pad(now.getMinutes());
+      shiftTime.textContent = `${hours}:${mins}`;
+      shiftSuccess.classList.add('active');
+      shiftBtn.textContent = 'Shift Started';
+      shiftBtn.disabled = true;
+      shiftBtn.style.background = "var(--success)";
+    });
   </script>
 </body>
 </html>

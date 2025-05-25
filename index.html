@@ -6,6 +6,7 @@
   <title>DriveMate</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <style>
     :root {
       --primary: #0f172a;
@@ -19,9 +20,7 @@
       --shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -84,6 +83,7 @@
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
+      text-decoration: none;
     }
 
     .btn:hover {
@@ -137,7 +137,7 @@
     <div class="card">
       <div class="card-title">This Week's Pay</div>
       <div style="font-size: 1.5rem; font-weight: bold;">$880.50</div>
-      <button class="btn" onclick="alert('Showing payslip modal...')">View Payslip</button>
+      <button class="btn" id="btn-payslip">View Payslip</button>
     </div>
 
     <div class="card">
@@ -180,5 +180,55 @@
   <footer>
     &copy; 2025 DriveMate. All rights reserved.
   </footer>
+  <script>
+    // Generate PDF payslip on button click using jsPDF
+    document.getElementById('btn-payslip').addEventListener('click', function() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.text("DriveMate Payslip", 105, 18, { align: "center" });
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text("Driver Name: Devon Driver", 20, 32);
+      doc.text("Driver ID: DRV-1278", 20, 40);
+
+      doc.text("Week: 22 (May 13 – May 19, 2025)", 20, 50);
+
+      // Draw table
+      let y = 65;
+      doc.setFont('helvetica', 'bold');
+      doc.text("Description", 30, y);
+      doc.text("Amount", 140, y);
+      doc.setFont('helvetica', 'normal');
+
+      y += 8;
+      doc.text("Base Pay", 30, y);
+      doc.text("$720.00", 140, y);
+
+      y += 8;
+      doc.text("Bonuses", 30, y);
+      doc.text("$120.50", 140, y);
+
+      y += 8;
+      doc.text("Deductions", 30, y);
+      doc.text("-$60.00", 140, y);
+
+      y += 12;
+      doc.setFont('helvetica', 'bold');
+      doc.text("Total Pay", 30, y);
+      doc.text("$880.50", 140, y);
+
+      y += 16;
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'italic');
+      doc.setTextColor(100);
+      doc.text("For more details, visit the HR portal or contact your manager.", 20, y);
+
+      doc.save("Payslip-Week22.pdf");
+    });
+  </script>
 </body>
 </html>

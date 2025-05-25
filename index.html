@@ -3,382 +3,182 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DriveMate - Driver App</title>
+  <title>DriveMate</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
   <style>
     :root {
-      --primary: #111827;
-      --accent: #4b5563;
-      --bg: #f9fafb;
+      --primary: #0f172a;
+      --secondary: #3b82f6;
+      --bg: #f8fafc;
       --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
-      --danger: #ef4444;
+      --text: #1e293b;
+      --muted: #64748b;
       --success: #10b981;
-      --radius: 12px;
-      --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      --radius: 16px;
+      --shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
     }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
       color: var(--text);
     }
+
     header {
-      background: var(--primary);
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      font-size: 1.3rem;
-      font-weight: bold;
-      box-shadow: var(--shadow);
-    }
-    .tab-bar {
-      display: flex;
-      justify-content: space-around;
-      background: white;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      box-shadow: var(--shadow);
-    }
-    .tab {
-      padding: 0.8rem 0;
-      text-align: center;
-      flex: 1;
-      font-size: 0.9rem;
-      color: var(--muted);
-      cursor: pointer;
-    }
-    .tab.active {
-      color: var(--primary);
-      font-weight: bold;
-    }
-    .screen {
-      display: none;
       padding: 1.5rem;
-      margin-bottom: 4rem;
+      background-color: var(--primary);
+      color: white;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
     }
-    .screen.active {
-      display: block;
+
+    .hero {
+      padding: 2rem 1rem;
+      text-align: center;
     }
+
+    .hero h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
     .card {
       background: var(--card);
       border-radius: var(--radius);
-      padding: 1rem;
-      margin-bottom: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
       box-shadow: var(--shadow);
     }
+
     .card-title {
       font-weight: 600;
+      font-size: 1.2rem;
       margin-bottom: 0.5rem;
     }
+
     .btn {
       display: inline-block;
-      background: var(--primary);
+      background-color: var(--secondary);
       color: white;
       padding: 0.6rem 1rem;
       border: none;
       border-radius: var(--radius);
+      font-weight: 600;
       cursor: pointer;
-      text-align: center;
-      font-size: 0.95rem;
-      margin-top: 0.5rem;
       transition: background 0.2s;
     }
-    .btn:disabled {
-      background: var(--muted);
-      cursor: default;
+
+    .btn:hover {
+      background-color: #2563eb;
     }
-    .essentials-grid {
+
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 1rem;
     }
+
     .essential-item {
       background: var(--card);
-      padding: 1rem;
       border-radius: var(--radius);
+      padding: 1.2rem;
       text-align: center;
-      box-shadow: var(--shadow);
-      cursor: pointer;
-      transition: transform 0.2s;
       text-decoration: none;
-      color: inherit;
-      display: block;
+      color: var(--text);
+      box-shadow: var(--shadow);
+      transition: transform 0.2s;
     }
+
     .essential-item:hover {
-      transform: translateY(-2px);
+      transform: translateY(-4px);
     }
+
     .essential-item i {
-      font-size: 1.5rem;
-      color: var(--primary);
+      font-size: 1.6rem;
+      color: var(--secondary);
       margin-bottom: 0.5rem;
     }
-    .note {
-      font-size: 0.96rem;
-      color: var(--muted);
-      margin-top: 0.5rem;
+
+    footer {
       text-align: center;
-    }
-    /* Modal Styles */
-    .modal-backdrop {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.25);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-backdrop.active {
-      display: flex;
-    }
-    .modal {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 1.5rem 1.2rem;
-      max-width: 340px;
-      width: 90vw;
-      box-shadow: var(--shadow);
-      position: relative;
-      animation: modalIn 0.22s;
-    }
-    @keyframes modalIn {
-      from { transform: translateY(30px) scale(0.97); opacity: 0; }
-      to   { transform: translateY(0) scale(1); opacity: 1; }
-    }
-    .modal-close {
-      position: absolute;
-      right: 1rem;
-      top: 1rem;
-      background: none;
-      border: none;
-      font-size: 1.2rem;
+      font-size: 0.9rem;
       color: var(--muted);
-      cursor: pointer;
-    }
-    .modal-header {
-      font-weight: bold;
-      font-size: 1.15rem;
-      margin-bottom: 0.7rem;
-      color: var(--primary);
-    }
-    .payslip-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 1rem;
-      font-size: 0.95rem;
-    }
-    .payslip-table th,
-    .payslip-table td {
-      text-align: left;
-      padding: 0.35rem 0.3rem;
-    }
-    .payslip-table th {
-      color: var(--muted);
-      font-weight: normal;
-      font-size: 0.93rem;
-    }
-    .payslip-table tr.total-row td {
-      font-weight: bold;
-      color: var(--primary);
-    }
-    .success-msg {
-      background: var(--success);
-      color: white;
-      border-radius: var(--radius);
-      padding: 0.7rem 1rem;
-      font-size: 1rem;
-      margin-bottom: 1rem;
-      text-align: center;
-      display: none;
-      margin-top: 0.5rem;
-    }
-    .success-msg.active {
-      display: block;
-      animation: fadeIn 0.25s;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0;}
-      to { opacity: 1;}
+      padding: 2rem 1rem;
     }
   </style>
 </head>
 <body>
-
   <header>DriveMate</header>
 
-  <main>
-    <section class="screen active" id="screen-home">
-      <div class="card">
-        <div class="card-title">This Week's Pay</div>
-        <div style="font-size: 1.2rem; font-weight: bold;">$880.50</div>
-        <button class="btn" id="btn-payslip">View Payslip</button>
-      </div>
-      <div class="card">
-        <div class="card-title">Today's Hours</div>
-        <div>9:00 AM – 5:00 PM</div>
-        <div>Total: 8 hrs</div>
-      </div>
-      <div class="card">
-        <div class="card-title">Company Announcements</div>
-        <ul>
-          <li>🚨 Rain forecasted tomorrow, drive safe!</li>
-          <li>💸 New bonus system starting next week</li>
-        </ul>
-      </div>
-      <div class="card">
-        <div class="card-title">Nearby Essentials</div>
-        <div class="essentials-grid">
-          <a class="essential-item"
-             href="https://www.google.com/maps/search/?api=1&query=Public+Toilet,+Main+St"
-             target="_blank" rel="noopener">
-            <i class="fas fa-restroom"></i><div>Toilet</div>
-          </a>
-          <a class="essential-item"
-             href="https://www.google.com/maps/search/?api=1&query=Raincoat+Store,+River+Rd"
-             target="_blank" rel="noopener">
-            <i class="fas fa-cloud-sun-rain"></i><div>Raincoats</div>
-          </a>
-          <a class="essential-item"
-             href="https://www.google.com/maps/search/?api=1&query=Fuel+Station,+Elm+Ave"
-             target="_blank" rel="noopener">
-            <i class="fas fa-gas-pump"></i><div>Fuel</div>
-          </a>
-          <a class="essential-item"
-             href="https://www.google.com/maps/search/?api=1&query=EV+Charger,+City+Plaza"
-             target="_blank" rel="noopener">
-            <i class="fas fa-charging-station"></i><div>EV Charging</div>
-          </a>
-        </div>
-      </div>
-    </section>
+  <section class="hero">
+    <h1>Welcome Back, Driver</h1>
+    <p>Your dashboard overview for the week</p>
+  </section>
 
-    <section class="screen" id="screen-hours">
-      <div class="card"><div class="card-title">Work Hours</div>Logged: 40 hours this week</div>
-      <div class="card">
-        <div class="card-title">Shift Tracker</div>
-        <button class="btn" id="btn-shift">Start Shift</button>
-        <div id="shift-success" class="success-msg">
-          <i class="fas fa-check-circle"></i> Shift started at <span id="shift-time"></span>
-        </div>
-      </div>
-    </section>
+  <div class="container">
+    <div class="card">
+      <div class="card-title">This Week's Pay</div>
+      <div style="font-size: 1.5rem; font-weight: bold;">$880.50</div>
+      <button class="btn" onclick="alert('Showing payslip modal...')">View Payslip</button>
+    </div>
 
-    <section class="screen" id="screen-updates">
-      <div class="card"><div class="card-title">Important Updates</div><p>No new announcements.</p></div>
-    </section>
+    <div class="card">
+      <div class="card-title">Today's Hours</div>
+      <div>9:00 AM – 5:00 PM</div>
+      <div>Total: 8 hrs</div>
+    </div>
 
-    <section class="screen" id="screen-profile">
-      <div class="card"><div class="card-title">Driver Profile</div>Name: Devon Driver<br>ID: DRV-1278</div>
-      <div class="card"><div class="card-title">Settings</div><button class="btn">Logout</button></div>
-    </section>
-  </main>
+    <div class="card">
+      <div class="card-title">Company Announcements</div>
+      <ul>
+        <li>🚨 Rain forecasted tomorrow, drive safe!</li>
+        <li>💸 New bonus system starting next week</li>
+      </ul>
+    </div>
 
-  <nav class="tab-bar">
-    <div class="tab active" data-screen="home"><i class="fas fa-home"></i><br>Home</div>
-    <div class="tab" data-screen="hours"><i class="fas fa-clock"></i><br>Hours</div>
-    <div class="tab" data-screen="updates"><i class="fas fa-bullhorn"></i><br>Updates</div>
-    <div class="tab" data-screen="profile"><i class="fas fa-user"></i><br>Profile</div>
-  </nav>
-
-  <!-- Payslip Modal -->
-  <div class="modal-backdrop" id="modal-backdrop">
-    <div class="modal" role="dialog" aria-modal="true" id="modal-payslip">
-      <button class="modal-close" id="close-payslip" aria-label="Close">&times;</button>
-      <div class="modal-header">Payslip (Week 22)</div>
-      <table class="payslip-table">
-        <tr>
-          <th>Date Range:</th>
-          <td>May 13 – May 19, 2025</td>
-        </tr>
-        <tr>
-          <th>Base Pay:</th>
-          <td>$720.00</td>
-        </tr>
-        <tr>
-          <th>Bonuses:</th>
-          <td>$120.50</td>
-        </tr>
-        <tr>
-          <th>Deductions:</th>
-          <td>-$60.00</td>
-        </tr>
-        <tr class="total-row">
-          <td>Total Pay:</td>
-          <td>$880.50</td>
-        </tr>
-      </table>
-      <div style="font-size: 0.98rem; color: var(--muted); text-align:center;">
-        For more details, visit the HR portal or contact your manager.
+    <div class="card">
+      <div class="card-title">Nearby Essentials</div>
+      <div class="grid">
+        <a class="essential-item" href="https://www.google.com/maps/search/?api=1&query=Public+Toilet,+Main+St" target="_blank">
+          <i class="fas fa-restroom"></i>
+          <div>Toilet</div>
+        </a>
+        <a class="essential-item" href="https://www.google.com/maps/search/?api=1&query=Raincoat+Store,+River+Rd" target="_blank">
+          <i class="fas fa-cloud-sun-rain"></i>
+          <div>Raincoats</div>
+        </a>
+        <a class="essential-item" href="https://www.google.com/maps/search/?api=1&query=Fuel+Station,+Elm+Ave" target="_blank">
+          <i class="fas fa-gas-pump"></i>
+          <div>Fuel</div>
+        </a>
+        <a class="essential-item" href="https://www.google.com/maps/search/?api=1&query=EV+Charger,+City+Plaza" target="_blank">
+          <i class="fas fa-charging-station"></i>
+          <div>EV Charging</div>
+        </a>
       </div>
     </div>
   </div>
 
-  <script>
-    // Tab navigation
-    const tabs = document.querySelectorAll('.tab');
-    const screens = document.querySelectorAll('.screen');
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        screens.forEach(s => s.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById('screen-' + tab.dataset.screen).classList.add('active');
-      });
-    });
-
-    // Payslip modal
-    const payslipBtn = document.getElementById('btn-payslip');
-    const payslipModal = document.getElementById('modal-backdrop');
-    const closePayslip = document.getElementById('close-payslip');
-
-    payslipBtn.addEventListener('click', function() {
-      payslipModal.classList.add('active');
-      // Prevent body scroll when modal is open
-      document.body.style.overflow = 'hidden';
-      closePayslip.focus();
-    });
-    closePayslip.addEventListener('click', function() {
-      payslipModal.classList.remove('active');
-      document.body.style.overflow = '';
-      payslipBtn.focus();
-    });
-    // Optional: Close modal with ESC or click on backdrop
-    payslipModal.addEventListener('click', function(e){
-      if(e.target === payslipModal) {
-        payslipModal.classList.remove('active');
-        document.body.style.overflow = '';
-        payslipBtn.focus();
-      }
-    });
-    document.addEventListener('keydown', function(e){
-      if(payslipModal.classList.contains('active') && e.key === 'Escape') {
-        payslipModal.classList.remove('active');
-        document.body.style.overflow = '';
-        payslipBtn.focus();
-      }
-    });
-
-    // Start Shift button functionality
-    const shiftBtn = document.getElementById('btn-shift');
-    const shiftSuccess = document.getElementById('shift-success');
-    const shiftTime = document.getElementById('shift-time');
-
-    shiftBtn.addEventListener('click', function(){
-      const now = new Date();
-      const pad = n => n < 10 ? '0'+n : n;
-      const hours = pad(now.getHours());
-      const mins = pad(now.getMinutes());
-      shiftTime.textContent = `${hours}:${mins}`;
-      shiftSuccess.classList.add('active');
-      shiftBtn.textContent = 'Shift Started';
-      shiftBtn.disabled = true;
-      shiftBtn.style.background = "var(--success)";
-    });
-  </script>
+  <footer>
+    &copy; 2025 DriveMate. All rights reserved.
+  </footer>
 </body>
 </html>

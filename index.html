@@ -1,1333 +1,196 @@
-<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
-  <meta charset="UTF-8">
-  <title>DriverMate+ App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DriveMate - Driver App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
   <style>
     :root {
-      --primary: #2563eb;
-      --primary-dark: #1e40af;
-      --secondary: #fff;
-      --accent: #60a5fa;
+      --primary: #111827;
+      --accent: #4b5563;
+      --bg: #f9fafb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
       --danger: #ef4444;
-      --bg: #f1f5fd;
-      --card: #fff;
-      --shadow: 0 2px 16px rgba(37,99,235,0.08);
-      --text: #1e293b;
-      --text-light: #64748b;
-      --border: #cbd5e1;
-      --chat-bg: #e0eaff;
-      --chat-mgr: #e0f2fe;
+      --radius: 12px;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
-    [data-theme="dark"] {
-      --primary: #2563eb;
-      --primary-dark: #60a5fa;
-      --secondary: #17203a;
-      --accent: #60a5fa;
-      --danger: #fb7185;
-      --bg: #1e293b;
-      --card: #27324d;
-      --shadow: 0 1px 8px rgba(96,165,250,0.22);
-      --text: #f1f5fd;
-      --text-light: #a3bffa;
-      --border: #334155;
-      --chat-bg: #1e40af;
-      --chat-mgr: #1e293b;
-    }
-    html, body {
-      margin: 0; padding: 0;
-      font-family: 'Segoe UI', Arial, sans-serif;
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg);
-      min-height: 100vh;
       color: var(--text);
-      transition: background 0.3s, color 0.3s;
-      box-sizing: border-box;
     }
     header {
       background: var(--primary);
-      color: var(--secondary);
-      padding: 1.1rem 1rem 1rem 1rem;
-      font-size: 1.2rem;
-      font-weight: bold;
-      letter-spacing: 1px;
-      box-shadow: var(--shadow);
-      position: sticky; top: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .header-title {
-      display: flex; align-items: center; gap: 0.5rem;
-    }
-    .igloo-logo {
-      width: 36px; height: 36px;
-      background: #fff;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem;
-      color: var(--primary);
-      margin-right: 0.3rem;
-      box-shadow: 0 1px 3px rgba(37,99,235,0.09);
-    }
-    .theme-toggle, .profile-btn, .refresh-btn, .contact-mgr-btn {
-      background: none; border: none;
-      color: var(--secondary); font-size: 1.2rem;
-      cursor: pointer; margin-left: 0.6rem;
-      transition: color 0.2s;
-    }
-    .refresh-btn { font-size: 1.15rem;}
-    .contact-mgr-btn { font-size: 1.15rem; }
-    /* Modal styles */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 700;
-      left: 0; top: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.19);
-      align-items: center; justify-content: center;
-      transition: background 0.2s;
-    }
-    .modal.active { display: flex; }
-    .modal-content {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 1.6rem 1.1rem .8rem 1.1rem;
-      box-shadow: var(--shadow);
-      min-width: 300px;
+      color: white;
+      padding: 1rem;
       text-align: center;
-      position: relative;
-      transition: background 0.3s, color 0.3s;
-      margin: 0 1rem;
-      max-width: 97vw;
-    }
-    .modal-close {
-      position: absolute; right: 1.2rem; top: 1.2rem;
-      background: none; color: var(--text-light); border: none;
-      font-size: 1.25rem; cursor: pointer;
-    }
-    .call-avatar {
-      width: 64px; height: 64px;
-      border-radius: 50%;
-      background: var(--primary);
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 2.2rem;
-      margin: 0 auto 1rem auto;
-      box-shadow: 0 2px 14px rgba(37,99,235,0.21);
-    }
-    .call-status {
-      color: var(--primary-dark);
-      font-size: 1.09rem;
-      margin-top: 0.8rem;
-      margin-bottom: 1.2rem;
-    }
-    .btn-endcall {
-      background: var(--danger);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 0.52rem 1.4rem;
-      font-size: 1.09rem;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background 0.18s;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.09);
-    }
-    .btn-endcall:active { opacity: 0.88; }
-    .chat-header {
-      display: flex; align-items: center; gap: 0.6rem;
-      justify-content: center;
-      font-size: 1.13rem;
-      font-weight: 600;
-      margin-bottom: .4rem;
-      color: var(--primary-dark);
-    }
-    .chat-messages {
-      background: var(--bg);
-      border-radius: 12px;
-      padding: 0.6rem 0.5rem 0.6rem 0.5rem;
-      min-height: 180px; max-height: 260px;
-      overflow-y: auto;
-      margin-bottom: 0.7rem;
-      text-align: left;
-      box-shadow: 0 1px 2px 0 rgba(0,0,0,0.02);
-    }
-    .chat-msg {
-      margin-bottom: 0.7rem;
-      display: flex; align-items: flex-end;
-      gap: 0.6rem;
-    }
-    .chat-msg.driver {
-      flex-direction: row-reverse;
-      justify-content: flex-end;
-    }
-    .chat-msg.manager {
-      flex-direction: row;
-      justify-content: flex-start;
-    }
-    .chat-bubble {
-      max-width: 80%;
-      padding: 0.55rem 1.1rem;
-      border-radius: 14px;
-      font-size: 1.01rem;
-      background: var(--chat-bg);
-      color: var(--primary-dark);
-      box-shadow: 0 1px 3px rgba(19,182,239,0.04);
-      word-break: break-word;
-      position: relative;
-    }
-    .chat-msg.manager .chat-bubble {
-      background: var(--chat-mgr);
-      color: #2563eb;
-    }
-    .chat-avatar {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: var(--primary);
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 1.15rem;
-    }
-    .chat-msg.manager .chat-avatar {
-      background: var(--accent);
-      color: #fff;
-    }
-    .chat-meta {
-      font-size: 0.81rem; color: var(--text-light);
-      margin: 2px 0 0 0; text-align: right;
-    }
-    .chat-inputbar {
-      display: flex; gap: 0.5rem;
-      margin-bottom: 0.2rem;
-    }
-    .chat-inputbar input {
-      flex: 1;
-      padding: 0.44rem 0.9rem;
-      border-radius: 7px;
-      border: 1.5px solid var(--border);
-      font-size: 1.05rem;
-      background: var(--bg);
-      color: var(--text);
-      outline: none;
-      transition: border 0.15s;
-    }
-    .chat-inputbar input:focus { border-color: var(--primary);}
-    .chat-inputbar button {
-      background: var(--primary); color: #fff;
-      border: none; border-radius: 7px;
-      padding: 0.44rem 1.2rem; font-size: 1rem;
-      font-weight: 500; cursor: pointer;
-      transition: background 0.16s;
-    }
-    .chat-inputbar button:active { opacity: 0.85;}
-    @media (max-width: 560px) {
-      .modal-content { min-width: 0; width: 98vw;}
-      .chat-messages { min-height: 130px; max-height: 44vh;}
-    }
-    main {
-      max-width: 520px;
-      margin: 1.3rem auto;
-      background: var(--card);
-      border-radius: 16px;
+      font-size: 1.3rem;
+      font-weight: bold;
       box-shadow: var(--shadow);
-      padding: 2rem 1.1rem 1.1rem 1.1rem;
-      min-height: 68vh;
-      transition: background 0.3s, color 0.3s;
     }
-    .tabs {
+    .tab-bar {
       display: flex;
-      justify-content: space-between;
-      margin-bottom: 1.05rem;
-      gap: 0.5rem;
-      flex-wrap: wrap;
+      justify-content: space-around;
+      background: white;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      box-shadow: var(--shadow);
     }
     .tab {
-      flex: 1;
-      padding: 0.51rem 0.2rem;
-      border-radius: 12px 12px 0 0;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-bottom: none;
-      font-weight: 500;
-      color: var(--text-light);
+      padding: 0.8rem 0;
       text-align: center;
+      flex: 1;
+      font-size: 0.9rem;
+      color: var(--muted);
       cursor: pointer;
-      transition: background 0.22s, color 0.22s, border 0.22s;
-      font-size: 1.01rem;
-      min-width: 80px;
     }
     .tab.active {
-      background: var(--card);
       color: var(--primary);
-      border-color: var(--primary);
-      border-bottom: 2.5px solid var(--card);
+      font-weight: bold;
     }
-    section.tab-panel { display: none; }
-    section.tab-panel.active { display: block; }
-    .orders-list {
-      padding: 0; margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 1.1rem;
+    .screen {
+      display: none;
+      padding: 1.5rem;
+      margin-bottom: 4rem;
     }
-    .order-card {
-      border: 1.5px solid var(--border);
-      border-radius: 14px;
-      background: var(--bg);
-      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
-      padding: 1rem 0.9rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      position: relative;
-      transition: border 0.18s, background 0.2s, box-shadow 0.2s, transform 0.18s;
-      animation: fadeInOrder 0.5s;
-      will-change: transform;
+    .screen.active {
+      display: block;
     }
-    @keyframes fadeInOrder {
-      from { opacity: 0; transform: translateY(12px);}
-      to   { opacity: 1; transform: translateY(0);}
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
     }
-    .order-card.accepted {
-      border-color: var(--primary);
-      background: #e0eaff;
-    }
-    [data-theme="dark"] .order-card.accepted {
-      background: #1e40af;
-    }
-    .order-card.delivered {
-      border-color: var(--accent);
-      background: #e0f2fe;
-      opacity: 0.64;
-    }
-    [data-theme="dark"] .order-card.delivered {
-      background: #334155;
-      border-color: var(--accent);
-    }
-    .order-header {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 0.5rem;
-    }
-    .order-details {
-      font-size: 1.05rem;
-      line-height: 1.6;
-      margin-bottom: 0.1rem;
-    }
-    .order-items {
-      color: var(--primary-dark);
-      font-size: 0.98rem;
-      margin: 0.11rem 0 0.15rem 0;
-    }
-    .order-address {
-      margin-bottom: 0.13rem;
-      font-size: 0.97rem;
-      color: var(--text-light);
-      display: flex; align-items: center; gap: 0.4rem;
-      word-break: break-all;
-    }
-    .order-time {
-      font-size: 0.91rem;
-      color: var(--primary-dark);
-      display: flex; align-items: center; gap: 0.3rem;
-    }
-    .order-actions {
-      display: flex;
-      gap: 0.7rem;
-      margin-top: 0.1rem;
-      flex-wrap: wrap;
+    .card-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
     }
     .btn {
-      border: none;
-      border-radius: 8px;
-      padding: 0.42rem 1.08rem;
-      font-size: 1rem;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background 0.18s, color 0.18s;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-      outline: none;
-      display: flex; align-items: center; gap: 0.41rem;
-    }
-    .btn-accept { background: var(--primary); color: #fff; }
-    .btn-reject { background: #fff0f2; color: var(--danger);}
-    .btn-deliver { background: var(--accent); color: #222;}
-    .btn-map { background: #e0eaff; color: var(--primary);}
-    .btn-call { background: #e0f2fe; color: #22c55e;}
-    .btn:active { opacity: 0.86; }
-    .badge {
-      background: var(--primary);
-      color: #fff;
-      font-size: 0.82rem;
-      padding: 0.22rem 0.7rem;
-      border-radius: 5px;
-      margin-left: 0.6rem;
-      letter-spacing: 0.5px;
-    }
-    .badge.cod {background: var(--danger);}
-    .badge.online {background: var(--primary);}
-    .timer {
-      background: #dbeafe;
-      padding: 0.22rem 0.7rem;
-      border-radius: 6px;
-      color: var(--primary-dark);
-      font-size: 0.89rem;
-      margin-left: 0.6rem;
       display: inline-block;
-      letter-spacing: 0.3px;
-      font-weight: 500;
-    }
-    [data-theme="dark"] .timer {
-      background: #1e40af;
-      color: #a3bffa;
-    }
-    .order-card.accepted .timer {
       background: var(--primary);
-      color: #fff;
-    }
-    .order-notes {
-      font-size: 0.93rem;
-      color: #2563eb;
-      background: #e0eaff;
-      margin: 0.2rem 0 0.07rem 0;
-      padding: 0.23rem 0.7rem;
-      border-radius: 6px;
-      display: flex; align-items: center; gap: 0.41rem;
-    }
-    [data-theme="dark"] .order-notes {
-      background: #1e293b;
-      color: var(--accent);
-    }
-    .empty-msg {
-      text-align: center;
-      color: var(--text-light);
-      margin-top: 2.7rem;
-      font-size: 1.12rem;
-    }
-    .profile-avatar {
-      width: 70px; height: 70px;
-      border-radius: 50%;
-      margin-bottom: 0.5rem;
-      background: var(--primary);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 2.3rem; color: #fff;
-      margin: 0 auto 0.6rem auto;
-      box-shadow: 0 2px 12px rgba(37,99,235,0.18);
-    }
-    .profile-avatar .fa-igloo {
-      font-size: 2.1rem;
-    }
-    .profile-name { font-size: 1.15rem; margin: 0.15rem 0 0.7rem 0;}
-    .profile-info { color: var(--text-light); font-size: 1.01rem; }
-    .btn-logout {
-      background: #fff0f2; color: var(--danger);
-      margin-top: 1.2rem;
-      width: 80%;
-      padding: 0.5rem 0;
-    }
-    .profile-stats {
-      display: flex; gap: 0.7rem; justify-content: center;
-      margin: 1.0rem 0 0.7rem 0;
-      flex-wrap: wrap;
-    }
-    .profile-stat {
-      background: var(--bg);
-      border-radius: 8px;
-      padding: 0.43rem 0.8rem;
-      color: var(--primary-dark);
-      font-size: 0.98rem;
-      display: flex; align-items: center; gap: 0.37rem;
-      box-shadow: 0 0 2px rgba(37,99,235,0.07);
-    }
-    .profile-stat i { color: var(--primary);}
-    .profile-stat .stat-label { color: var(--text-light);}
-    .satisfaction-box {
-      background: var(--bg);
-      border-radius: 10px;
-      padding: 0.7rem 1.2rem;
-      color: var(--primary-dark);
-      font-weight: 500;
-      font-size: 1.13rem;
-      display: flex; align-items: center; gap: 0.53rem;
-      box-shadow: 0 0 2px rgba(37,99,235,0.07);
-      margin-bottom: 4px;
-      justify-content: center;
-    }
-    .reviews-summary {
-      display: flex; align-items: center; gap: 1.1rem;
-      margin-bottom: 1.2rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .reviews-list {
-      padding: 0; margin: 0;
-      display: flex; flex-direction: column; gap: 1.1rem;
-      list-style: none;
-    }
-    .review-card {
-      border: 1.3px solid var(--border);
-      border-radius: 10px;
-      background: var(--bg);
-      padding: 1rem 0.9rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-      font-size: 1.01rem;
-      position: relative;
-    }
-    .review-header {
-      display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.18rem;
-    }
-    .review-stars {
-      color: #facc15; font-size: 1.18rem; letter-spacing: 2px;
-    }
-    .review-date {
-      color: var(--text-light); font-size: 0.94rem;
-    }
-    .review-comment {
-      margin-top: 0.2rem;
-      color: var(--text);
-      font-size: 1.01rem;
-    }
-    .payslip-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.9rem;
-    }
-    .payslip-item {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 1.03rem;
-      box-shadow: 0 1px 2px rgba(96,165,250,0.03);
-      gap: 1rem;
-      flex-wrap: wrap;
-      transition: background 0.18s;
-    }
-    .payslip-item .amount {
-      font-weight: bold; color: var(--primary-dark); font-size: 1.09rem;
-    }
-    .payslip-item .btn-download {
-      background: var(--primary);
-      color: #fff;
-      padding: 0.38rem 1rem;
-      border-radius: 7px;
+      color: white;
+      padding: 0.6rem 1rem;
       border: none;
-      font-size: 0.99rem;
+      border-radius: var(--radius);
       cursor: pointer;
-      transition: background 0.18s;
-    }
-    .payslip-item .btn-download:active { opacity: 0.85;}
-    .hours-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 0.9rem 0;
-      font-size: 1.04rem;
-    }
-    .hours-table th, .hours-table td {
-      padding: 0.55rem 0.7rem;
-      border: 1px solid var(--border);
-      text-align: left;
-    }
-    .hours-table th {
-      background: var(--bg);
-      color: var(--primary-dark);
-    }
-    .hours-table td {
-      background: var(--card);
-      color: var(--text);
-    }
-    .hours-summary {
-      margin-top: 0.7rem;
-      font-size: 1.06rem;
-      font-weight: 500;
-      color: var(--primary-dark);
-    }
-    .announcement-list {
-      list-style: none;
-      padding: 0; margin: 0;
-      display: flex; flex-direction: column; gap: 1.1rem;
-    }
-    .announcement-card {
-      border: 1.3px solid var(--border);
-      border-radius: 10px;
-      background: var(--bg);
-      padding: 1rem 0.9rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-      font-size: 1.01rem;
-      position: relative;
-    }
-    .announcement-title {
-      font-size: 1.08rem;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 0.25rem;
-      display: flex; align-items: center; gap: 0.5rem;
-    }
-    .announcement-time {
-      color: var(--text-light);
+      text-align: center;
       font-size: 0.95rem;
-      margin-bottom: 0.3rem;
+      margin-top: 0.5rem;
     }
-    .essentials-list {
-      display: flex; flex-direction: column; gap: 1.1rem;
-      margin-top: 1.1rem;
+    .essentials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
     }
     .essential-item {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      font-size: 1.04rem;
-      box-shadow: 0 1px 2px rgba(96,165,250,0.03);
-      transition: background 0.18s;
+      background: var(--card);
+      padding: 1rem;
+      border-radius: var(--radius);
+      text-align: center;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .essential-item:hover {
+      transform: translateY(-2px);
     }
     .essential-item i {
-      font-size: 1.6rem;
-      color: var(--primary-dark);
-      min-width: 32px;
-    }
-    .essential-item .btn-map {
-      margin-left: auto;
-      font-size: 0.98rem;
-      padding: 0.31rem 0.8rem;
-    }
-    .essentials-note {
-      color: var(--primary-dark);
-      font-size: 0.98rem;
-      margin-bottom: 0.3rem;
-    }
-    @media (max-width: 650px) {
-      main { padding: 1rem 0.2rem; }
-      .modal-content { padding: 1.2rem 0.2rem 1rem 0.2rem;}
-      .payslip-item { flex-direction: column; align-items: flex-start;}
-      .reviews-summary { flex-direction: column; gap: 0.7rem; }
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
     }
   </style>
 </head>
-<body data-theme="light">
-  <header>
-    <span class="header-title">
-      <span class="igloo-logo"><i class="fa-solid fa-igloo"></i></span>
-      <span>DriverMate</span>
-    </span>
-    <span>
-      <button class="refresh-btn" id="refreshBtn" title="Refresh orders"><i class="fa-solid fa-arrows-rotate"></i></button>
-      <button class="contact-mgr-btn" id="contactMgrBtn" title="Contact Support">
-        <i class="fa-solid fa-headset"></i>
-      </button>
-      <button class="theme-toggle" id="themeToggle" title="Toggle theme">
-        <i class="fa-solid fa-moon"></i>
-      </button>
-      <button class="profile-btn" id="profileBtn" title="Profile">
-        <i class="fa-solid fa-user-circle"></i>
-      </button>
-    </span>
-  </header>
+<body>
 
-  <!-- Call Modal -->
-  <div class="modal" id="callModal">
-    <div class="modal-content" style="width:340px;max-width:97vw;">
-      <button class="modal-close" onclick="closeCallModal()"><i class="fa-solid fa-xmark"></i></button>
-      <div class="call-avatar"><i class="fa-solid fa-user"></i></div>
-      <div style="font-size:1.3rem;margin-bottom:0.4rem;" id="callCustomerName"></div>
-      <div id="callCustomerPhone" style="color:var(--text-light);margin-bottom:0.9rem;"></div>
-      <div class="call-status">Calling...</div>
-      <button class="btn-endcall" onclick="closeCallModal()">
-        <i class="fa-solid fa-phone-slash"></i> End Call
-      </button>
-    </div>
-  </div>
-
-  <!-- Chat Modal for Support -->
-  <div class="modal" id="chatModal">
-    <div class="modal-content" style="width:350px;max-width:97vw;">
-      <button class="modal-close" onclick="closeChat()"><i class="fa-solid fa-xmark"></i></button>
-      <div class="chat-header">
-        <span class="chat-avatar"><i class="fa-solid fa-headset"></i></span>
-        <span>Contact Support</span>
-      </div>
-      <div class="chat-messages" id="chatMessages"></div>
-      <form class="chat-inputbar" id="chatInputForm" autocomplete="off">
-        <input type="text" id="chatInput" placeholder="Type your message..." maxlength="180" autocomplete="off" required="">
-        <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Profile Modal -->
-  <div class="modal" id="profileModal">
-    <div class="modal-content">
-      <button class="modal-close" id="modalCloseBtn"><i class="fa-solid fa-xmark"></i></button>
-      <div class="profile-avatar"><i class="fa-solid fa-igloo"></i></div>
-      <div class="profile-name" id="profileName">Devon Driver</div>
-      <div class="profile-info">
-        <div><i class="fa-solid fa-phone"></i> <span id="profilePhone">+1 234-567-8890</span></div>
-        <div><i class="fa-solid fa-id-card"></i> ID: DRV-1278</div>
-      </div>
-      <div class="profile-stats" id="profileStats"></div>
-      <div class="satisfaction-box" id="profileSatisfactionBox" style="justify-content:center;margin-top:0.8rem;"></div>
-      <button class="btn btn-logout" onclick="logout()">Logout</button>
-    </div>
-  </div>
+  <header>DriveMate</header>
 
   <main>
-    <div class="tabs" id="tabs">
-      <button class="tab active" data-tab="orders"><i class="fa-solid fa-list"></i> Orders</button>
-      <button class="tab" data-tab="payslips"><i class="fa-solid fa-file-invoice-dollar"></i> Payslips</button>
-      <button class="tab" data-tab="hours"><i class="fa-solid fa-clock"></i> Hours</button>
-      <button class="tab" data-tab="announcements"><i class="fa-solid fa-bullhorn"></i> Announce</button>
-      <button class="tab" data-tab="essentials"><i class="fa-solid fa-map-location-dot"></i> Essentials</button>
-      <button class="tab" data-tab="reviews"><i class="fa-solid fa-star"></i> Reviews</button>
-    </div>
-
-    <!-- Orders Tab -->
-    <section class="tab-panel active" id="ordersPanel">
-      <ul class="orders-list" id="ordersList"></ul>
-      <div id="emptyMsg" class="empty-msg" style="display:none;">No orders here 🚦</div>
-    </section>
-
-    <!-- Payslips Tab -->
-    <section class="tab-panel" id="payslipsPanel">
-      <ul class="payslip-list" id="payslipList"></ul>
-      <div style="color:var(--text-light);font-size:0.99rem;margin-top:0.7rem;">
-        Payslips are confidential. For any issues, contact HR via Support button above.
+    <section class="screen active" id="screen-home">
+      <div class="card">
+        <div class="card-title">This Week's Pay</div>
+        <div style="font-size: 1.2rem; font-weight: bold;">$880.50</div>
+        <button class="btn">View Payslip</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Today's Hours</div>
+        <div>9:00 AM – 5:00 PM</div>
+        <div>Total: 8 hrs</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Company Announcements</div>
+        <ul>
+          <li>🚨 Rain forecasted tomorrow, drive safe!</li>
+          <li>💸 New bonus system starting next week</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">Nearby Essentials</div>
+        <div class="essentials-grid">
+          <div class="essential-item" onclick="openMap('Public Toilet, Main St')">
+            <i class="fas fa-restroom"></i><div>Toilet</div>
+          </div>
+          <div class="essential-item" onclick="openMap('Raincoat Store, River Rd')">
+            <i class="fas fa-cloud-sun-rain"></i><div>Raincoats</div>
+          </div>
+          <div class="essential-item" onclick="openMap('Fuel Station, Elm Ave')">
+            <i class="fas fa-gas-pump"></i><div>Fuel</div>
+          </div>
+          <div class="essential-item" onclick="openMap('EV Charger, City Plaza')">
+            <i class="fas fa-charging-station"></i><div>EV Charging</div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Hours Tab -->
-    <section class="tab-panel" id="hoursPanel">
-      <table class="hours-table" id="hoursTable">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Hours</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <div class="hours-summary" id="hoursSummary"></div>
+    <section class="screen" id="screen-hours">
+      <div class="card"><div class="card-title">Work Hours</div>Logged: 40 hours this week</div>
+      <div class="card"><div class="card-title">Shift Tracker</div><button class="btn">Start Shift</button></div>
     </section>
 
-    <!-- Announcements Tab -->
-    <section class="tab-panel" id="announcementsPanel">
-      <ul class="announcement-list" id="announcementList"></ul>
+    <section class="screen" id="screen-updates">
+      <div class="card"><div class="card-title">Important Updates</div><p>No new announcements.</p></div>
     </section>
 
-    <!-- Essentials Tab -->
-    <section class="tab-panel" id="essentialsPanel">
-      <div class="essentials-note">
-        Find essential stops for drivers nearby:
-      </div>
-      <div class="essentials-list" id="essentialsList"></div>
-    </section>
-
-    <!-- Reviews Tab -->
-    <section class="tab-panel" id="reviewsPanel">
-      <div class="reviews-summary" id="reviewsSummary"></div>
-      <ul class="reviews-list" id="reviewsList"></ul>
-      <div id="noReviewsMsg" class="empty-msg" style="display:none;">No reviews yet.</div>
+    <section class="screen" id="screen-profile">
+      <div class="card"><div class="card-title">Driver Profile</div>Name: Devon Driver<br>ID: DRV-1278</div>
+      <div class="card"><div class="card-title">Settings</div><button class="btn">Logout</button></div>
     </section>
   </main>
 
+  <nav class="tab-bar">
+    <div class="tab active" data-screen="home"><i class="fas fa-home"></i><br>Home</div>
+    <div class="tab" data-screen="hours"><i class="fas fa-clock"></i><br>Hours</div>
+    <div class="tab" data-screen="updates"><i class="fas fa-bullhorn"></i><br>Updates</div>
+    <div class="tab" data-screen="profile"><i class="fas fa-user"></i><br>Profile</div>
+  </nav>
+
   <script>
-    // -- [All your previous JS remains unchanged, except for tabs logic below] --
+    const tabs = document.querySelectorAll('.tab');
+    const screens = document.querySelectorAll('.screen');
 
-    // === REVIEWS DATA ===
-    let reviews = [
-      { stars: 5, comment: "Very polite and quick delivery. Thank you!", customer: "Alice Johnson", date: "2024-05-20" },
-      { stars: 4, comment: "Came on time and followed instructions.", customer: "Bob Lee", date: "2024-05-19" },
-      { stars: 5, comment: "Perfect! Highly recommend.", customer: "Sara Miller", date: "2024-05-18" },
-      { stars: 3, comment: "A bit late but called me. Delivery was ok.", customer: "Jonas Rivera", date: "2024-05-17" },
-      { stars: 5, comment: "Super friendly, thanks for the help!", customer: "Maya Lin", date: "2024-05-15" },
-      { stars: 4, comment: "Everything was good.", customer: "Emily Wang", date: "2024-05-14" }
-    ];
-
-    function computeSatisfactionRate(reviews) {
-      if (!reviews || !reviews.length) return 0;
-      const satisfied = reviews.filter(r => r.stars >= 4).length;
-      return Math.round((satisfied / reviews.length) * 100);
-    }
-
-    function renderReviews() {
-      // Summary
-      const satisfaction = computeSatisfactionRate(reviews);
-      document.getElementById('reviewsSummary').innerHTML = `
-        <div class="satisfaction-box">
-          <i class="fa-solid fa-face-smile"></i>
-          Satisfaction Rate:
-          <span style="font-weight:bold;color:var(--primary);">${satisfaction}%</span>
-        </div>
-        <div class="satisfaction-box">
-          <i class="fa-solid fa-star"></i>
-          Average Rating:
-          <span style="font-weight:bold;color:#facc15;">${(reviews.reduce((s,r)=>s+r.stars,0)/reviews.length).toFixed(2)} <i class="fa-solid fa-star"></i></span>
-        </div>
-      `;
-      // Reviews list
-      const list = document.getElementById('reviewsList');
-      list.innerHTML = "";
-      if (!reviews.length) {
-        document.getElementById('noReviewsMsg').style.display = '';
-        return;
-      }
-      document.getElementById('noReviewsMsg').style.display = 'none';
-      reviews.forEach(r => {
-        const li = document.createElement('li');
-        li.className = "review-card";
-        li.innerHTML = `
-          <div class="review-header">
-            <span class="review-stars">${"★".repeat(r.stars)}${"☆".repeat(5 - r.stars)}</span>
-            <span style="font-weight:600;">${r.customer}</span>
-            <span class="review-date">${r.date}</span>
-          </div>
-          <div class="review-comment">${r.comment}</div>
-        `;
-        list.appendChild(li);
-      });
-    }
-
-    // Add satisfaction rate also to profile modal
-    function renderProfileStats() {
-      const delivered = orders.filter(o=>o.status==="delivered");
-      const active = orders.filter(o=>o.status==="accepted").length;
-      const avgTime = delivered.length ?
-        formatTimer(delivered.reduce((s,o)=>s+(o.deliveredAt-o.acceptedAt),0)/delivered.length) : "-";
-      document.getElementById("profileStats").innerHTML = `
-        <div class="profile-stat"><i class="fa-solid fa-box"></i> ${active} <span class="stat-label">Active</span></div>
-        <div class="profile-stat"><i class="fa-solid fa-check"></i> ${delivered.length} <span class="stat-label">Delivered</span></div>
-        <div class="profile-stat"><i class="fa-solid fa-clock"></i> ${avgTime} <span class="stat-label">Avg Time</span></div>
-      `;
-      const satisfaction = computeSatisfactionRate(reviews);
-      document.getElementById("profileSatisfactionBox").innerHTML = `
-        <i class="fa-solid fa-face-smile"></i>
-        Satisfaction: <span style="font-weight:bold;color:var(--primary);">${satisfaction}%</span>
-      `;
-    }
-
-    // ===== ORDERS DATA (for demonstration) =====
-    let orders = [
-      {
-        id: 1,
-        customer: "Alice Johnson",
-        phone: "+1 555-203-1932",
-        address: "123 Main St, Springfield",
-        lat: 39.799, lng: -89.644,
-        items: ["Veg Pizza", "Coke 500ml"],
-        payment: "Paid Online",
-        status: "available",
-        placedAt: Date.now() - 7 * 60 * 1000,
-        acceptedAt: null,
-        deliveredAt: null,
-        notes: "Leave at door, call on arrival."
-      },
-      {
-        id: 2,
-        customer: "Bob Lee",
-        phone: "+1 555-253-8912",
-        address: "45 Maple Ave, Lakeside",
-        lat: 41.421, lng: -81.647,
-        items: ["Grocery Pack", "Chips", "Milk 1L"],
-        payment: "COD",
-        status: "available",
-        placedAt: Date.now() - 3 * 60 * 1000,
-        acceptedAt: null,
-        deliveredAt: null,
-        notes: ""
-      },
-      {
-        id: 3,
-        customer: "Sara Miller",
-        phone: "+1 555-409-2741",
-        address: "9 Hilltop Rd, River City",
-        lat: 34.053, lng: -118.242,
-        items: ["Ice Cream", "Cookies"],
-        payment: "Paid Online",
-        status: "available",
-        placedAt: Date.now() - 1 * 60 * 1000,
-        acceptedAt: null,
-        deliveredAt: null,
-        notes: "Allergic to peanuts."
-      },
-      {
-        id: 4,
-        customer: "Jonas Rivera",
-        phone: "+1 555-183-3114",
-        address: "88 Southgate Blvd, Hudson",
-        lat: 40.245, lng: -74.011,
-        items: ["Burger Meal", "Fries"],
-        payment: "Paid Online",
-        status: "accepted",
-        placedAt: Date.now() - 19 * 60 * 1000,
-        acceptedAt: Date.now() - 12 * 60 * 1000,
-        deliveredAt: null,
-        notes: ""
-      },
-      {
-        id: 5,
-        customer: "Maya Lin",
-        phone: "+1 555-914-1024",
-        address: "44 Oak Dr, Forest",
-        lat: 37.792, lng: -122.404,
-        items: ["Salad Bowl", "Orange Juice"],
-        payment: "COD",
-        status: "delivered",
-        placedAt: Date.now() - 63 * 60 * 1000,
-        acceptedAt: Date.now() - 60 * 60 * 1000,
-        deliveredAt: Date.now() - 18 * 60 * 1000,
-        notes: "Ring the bell twice."
-      },
-    ];
-
-    function formatTimeAgo(ms) {
-      const min = Math.floor(ms / 60000);
-      const sec = Math.floor((ms % 60000) / 1000);
-      if (min > 0) return `${min}m ${sec}s ago`;
-      return `${sec}s ago`;
-    }
-    function formatTimer(ms) {
-      const min = Math.floor(ms / 60000);
-      const sec = Math.floor((ms % 60000) / 1000);
-      return `${min<10?'0':''}${min}:${sec<10?'0':''}${sec}`;
-    }
-    let timerInterval = null;
-    function renderOrders() {
-      const list = document.getElementById('ordersList');
-      let filtered = orders;
-      document.getElementById('emptyMsg').style.display = filtered.length ? 'none' : '';
-      list.innerHTML = "";
-      filtered.forEach(order => {
-        const li = document.createElement('li');
-        li.className = `order-card${order.status === 'accepted' ? ' accepted' : ''}${order.status === 'delivered' ? ' delivered' : ''}`;
-        li.innerHTML = `
-          <div class="order-header">
-            <div>
-              <strong>${order.customer}</strong>
-              <span class="badge ${order.payment === 'COD' ? 'cod' : 'online'}">${order.payment}</span>
-              ${order.status === 'accepted' ? `<span class="timer" id="timer-${order.id}"></span>` : ''}
-            </div>
-            <div class="order-time">
-              <i class="fa-solid fa-clock"></i>
-              ${order.status === 'available' ? formatTimeAgo(Date.now() - order.placedAt) : 
-                order.status === 'accepted' ? 'En route' : 
-                formatTimeAgo(Date.now() - (order.deliveredAt || Date.now()))
-              }
-            </div>
-          </div>
-          <div class="order-details">
-            <div class="order-items">📦 ${order.items.join(', ')}</div>
-            <div class="order-address">
-              <i class="fa-solid fa-location-dot"></i> ${order.address}
-            </div>
-            ${order.notes ? `<div class="order-notes"><i class="fa-solid fa-note-sticky"></i>${order.notes}</div>` : ''}
-          </div>
-          <div class="order-actions">
-            ${order.status === 'available' ? `
-              <button class="btn btn-accept" onclick="acceptOrder(${order.id})">
-                <i class="fa-solid fa-check"></i> Accept
-              </button>
-              <button class="btn btn-reject" onclick="rejectOrder(${order.id})">
-                <i class="fa-solid fa-xmark"></i> Reject
-              </button>
-              <button class="btn btn-call" onclick="callCustomer('${order.phone}','${order.customer}')">
-                <i class="fa-solid fa-phone"></i> Call
-              </button>
-            ` : order.status === 'accepted' ? `
-              <button class="btn btn-deliver" onclick="markDelivered(${order.id})">
-                <i class="fa-solid fa-box"></i> Delivered
-              </button>
-              <button class="btn btn-map" onclick="openInMaps(${order.lat},${order.lng},'${encodeURIComponent(order.address)}')">
-                <i class="fa-solid fa-map-location-dot"></i> Map
-              </button>
-              <button class="btn btn-call" onclick="callCustomer('${order.phone}','${order.customer}')">
-                <i class="fa-solid fa-phone"></i> Call
-              </button>
-            ` : order.status === 'delivered' ? `
-              <span class="badge" style="background:var(--accent);color:#222;">Delivered</span>
-              <button class="btn btn-map" onclick="openInMaps(${order.lat},${order.lng},'${encodeURIComponent(order.address)}')">
-                <i class="fa-solid fa-map-location-dot"></i> Map
-              </button>
-            ` : ''}
-          </div>
-        `;
-        list.appendChild(li);
-      });
-      if(timerInterval) clearInterval(timerInterval);
-      if(orders.some(o=>o.status==="accepted")) {
-        timerInterval = setInterval(updateTimers, 1000);
-        updateTimers();
-      }
-    }
-    function updateTimers() {
-      orders.filter(o=>o.status==='accepted').forEach(o=>{
-        const el = document.getElementById('timer-'+o.id);
-        if(el) {
-          const t = Date.now()-o.acceptedAt;
-          el.textContent = formatTimer(t);
-        }
-      });
-    }
-    window.acceptOrder = function(id) {
-      const order = orders.find(o => o.id === id);
-      if (order && order.status === 'available') {
-        order.status = 'accepted';
-        order.acceptedAt = Date.now();
-        renderOrders();
-        showToast("Order accepted! 🚚");
-      }
-    }
-    window.rejectOrder = function(id) {
-      const idx = orders.findIndex(o => o.id === id);
-      if (idx > -1 && orders[idx].status === 'available') {
-        orders.splice(idx, 1);
-        renderOrders();
-        showToast("Order rejected.");
-      }
-    }
-    window.markDelivered = function(id) {
-      const order = orders.find(o => o.id === id);
-      if (order && order.status === 'accepted') {
-        order.status = 'delivered';
-        order.deliveredAt = Date.now();
-        renderOrders();
-        showToast("Order marked as delivered! ✅");
-      }
-    }
-    window.openInMaps = function(lat, lng, address) {
-      let url = "";
-      if(lat && lng) {
-        url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-      } else {
-        url = `https://www.google.com/maps/search/?api=1&query=${address}`;
-      }
-      window.open(url, "_blank");
-    }
-    // ====== REFRESH BUTTON LOGIC ======
-    document.getElementById('refreshBtn').onclick = function() {
-      addRandomOrder();
-      renderOrders();
-      showToast("New order received!");
-    };
-    function addRandomOrder() {
-      const names = ["Carlos Vega","Emily Wang","Tariq Hassan","Lisa Kim","George Papadopoulos"];
-      const addresses = [
-        "200 Sunflower Rd, Midtown",
-        "77 Baker St, Old Town",
-        "15 Riverbank Ave, Riverside",
-        "560 Oakwood Dr, Hamlet",
-        "301 Elm St, Newville"
-      ];
-      const phones = [
-        "+1 555-422-1987",
-        "+1 555-134-2876",
-        "+1 555-692-1126",
-        "+1 555-321-8844",
-        "+1 555-733-1092"
-      ];
-      const itemsArr = [
-        ["Pizza", "Fanta"], ["Eggs", "Milk", "Bread"], ["Fried Chicken"], ["Donuts", "Coffee"], ["Energy Bar", "Water"]
-      ];
-      const payTypes = ["COD", "Paid Online"];
-      const notesArr = [
-        "Call when outside.",
-        "",
-        "Deliver to side door.",
-        "Beware of dog.",
-        ""
-      ];
-      const idx = Math.floor(Math.random()*names.length);
-      orders.unshift({
-        id: Math.max(...orders.map(o=>o.id))+1,
-        customer: names[idx],
-        phone: phones[idx],
-        address: addresses[idx],
-        lat: 39.8 + Math.random()/100,
-        lng: -89.64 + Math.random()/100,
-        items: itemsArr[idx],
-        payment: payTypes[Math.floor(Math.random()*payTypes.length)],
-        status: "available",
-        placedAt: Date.now(),
-        acceptedAt: null,
-        deliveredAt: null,
-        notes: notesArr[idx]
-      });
-    }
-
-    // ====== CALL CUSTOMER LOGIC ======
-    function callCustomer(phone, name) {
-      document.getElementById('callCustomerName').textContent = name;
-      document.getElementById('callCustomerPhone').textContent = phone;
-      document.getElementById('callModal').classList.add('active');
-      showToast(`Calling ${name}: ${phone}`);
-    }
-    window.callCustomer = callCustomer;
-    function closeCallModal() {
-      document.getElementById('callModal').classList.remove('active');
-      showToast('Call ended.');
-    }
-    window.closeCallModal = closeCallModal;
-
-    // ====== PAYSLIPS, HOURS, ANNOUNCEMENTS, ESSENTIALS LOGIC (unchanged) ======
-    let payslips = [
-      { month: "May 2024", amount: "$2,150", date: "2024-05-31", file: "#" },
-      { month: "April 2024", amount: "$2,070", date: "2024-04-30", file: "#" },
-      { month: "March 2024", amount: "$1,980", date: "2024-03-31", file: "#" }
-    ];
-    function renderPayslips() {
-      const ul = document.getElementById("payslipList");
-      ul.innerHTML = "";
-      payslips.forEach(ps=>{
-        const li = document.createElement("li");
-        li.className = "payslip-item";
-        li.innerHTML = `
-          <div>
-            <div><strong>${ps.month}</strong></div>
-            <div style="font-size:0.97em;color:var(--text-light);">${ps.date}</div>
-          </div>
-          <div class="amount">${ps.amount}</div>
-          <button class="btn-download" onclick="downloadPayslip('${ps.file}')">
-            <i class="fa-solid fa-download"></i> Download
-          </button>
-        `;
-        ul.appendChild(li);
-      });
-    }
-    window.downloadPayslip = function(url) {
-      showToast('Payslip downloaded!');
-    }
-    let workedHours = [
-      { date: "2024-05-21", start: "08:00", end: "17:00", hours: 9 },
-      { date: "2024-05-20", start: "09:00", end: "18:00", hours: 9 },
-      { date: "2024-05-19", start: "08:15", end: "17:30", hours: 9.25 },
-      { date: "2024-05-18", start: "08:00", end: "16:45", hours: 8.75 },
-      { date: "2024-05-17", start: "08:10", end: "17:00", hours: 8.83 },
-    ];
-    function renderHours() {
-      const tbody = document.querySelector("#hoursTable tbody");
-      tbody.innerHTML = "";
-      let total = 0;
-      workedHours.forEach(row=>{
-        total += row.hours;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${row.date}</td>
-          <td>${row.start}</td>
-          <td>${row.end}</td>
-          <td>${row.hours}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-      document.getElementById("hoursSummary").textContent = `Total: ${total.toFixed(2)} hours`;
-    }
-    let announcements = [
-      {
-        title: "Rain Alert: Drive with Caution",
-        message: "Heavy rain expected this week. Please ensure your raincoats are ready and drive safely.",
-        time: "2024-05-21 07:00"
-      },
-      {
-        title: "Policy Update: Overtime",
-        message: "New overtime pay structure effective from May. Check the HR section for details.",
-        time: "2024-05-20 15:30"
-      },
-      {
-        title: "Fuel Reimbursement Changed",
-        message: "Submit your fuel receipts weekly for faster reimbursement processing.",
-        time: "2024-05-19 10:00"
-      }
-    ];
-    function renderAnnouncements() {
-      const ul = document.getElementById("announcementList");
-      ul.innerHTML = "";
-      announcements.forEach(a=>{
-        const li = document.createElement("li");
-        li.className = "announcement-card";
-        li.innerHTML = `
-          <div class="announcement-title"><i class="fa-solid fa-bullhorn"></i> ${a.title}</div>
-          <div class="announcement-time">${a.time}</div>
-          <div>${a.message}</div>
-        `;
-        ul.appendChild(li);
-      });
-    }
-    let essentials = [
-      { type: "Toilet", desc: "Public Restroom", address: "456 Park Ave", icon: "fa-restroom", lat: 39.800, lng: -89.645 },
-      { type: "Raincoat", desc: "Mart Convenience", address: "22 Elm St", icon: "fa-cloud-showers-heavy", lat: 39.802, lng: -89.643 },
-      { type: "Gas Station", desc: "FastGas Station", address: "1500 Main St", icon: "fa-gas-pump", lat: 39.810, lng: -89.640 },
-      { type: "Charger", desc: "EV ChargePoint", address: "Next to City Library", icon: "fa-bolt", lat: 39.798, lng: -89.642 }
-    ];
-    function renderEssentials() {
-      const list = document.getElementById("essentialsList");
-      list.innerHTML = "";
-      essentials.forEach(e=>{
-        const div = document.createElement("div");
-        div.className = "essential-item";
-        div.innerHTML = `
-          <i class="fa-solid ${e.icon}"></i>
-          <div>
-            <div><strong>${e.type}</strong> - ${e.desc}</div>
-            <div style="font-size:0.97em;color:var(--text-light);">${e.address}</div>
-          </div>
-          <button class="btn btn-map" onclick="openInMaps(${e.lat},${e.lng},'${encodeURIComponent(e.address)}')">
-            <i class="fa-solid fa-map-location-dot"></i> Map
-          </button>
-        `;
-        list.appendChild(div);
-      });
-    }
-    // ====== TABS LOGIC ======
-    document.querySelectorAll('.tab').forEach(tab=>{
-      tab.addEventListener('click', function() {
-        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-        this.classList.add('active');
-        document.querySelectorAll('section.tab-panel').forEach(s=>s.classList.remove('active'));
-        const tabName = this.dataset.tab;
-        document.getElementById(tabName+"Panel").classList.add("active");
-        if(tabName==="orders") renderOrders();
-        if(tabName==="payslips") renderPayslips();
-        if(tabName==="hours") renderHours();
-        if(tabName==="announcements") renderAnnouncements();
-        if(tabName==="essentials") renderEssentials();
-        if(tabName==="reviews") renderReviews();
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        screens.forEach(s => s.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('screen-' + tab.dataset.screen).classList.add('active');
       });
     });
 
-    // ====== PROFILE MODAL LOGIC ======
-    const profileBtn = document.getElementById('profileBtn');
-    const profileModal = document.getElementById('profileModal');
-    const modalCloseBtn = document.getElementById('modalCloseBtn');
-    profileBtn.onclick = ()=>{ renderProfileStats(); profileModal.classList.add('active'); }
-    modalCloseBtn.onclick = ()=>{ profileModal.classList.remove('active'); }
-    window.logout = function() {
-      profileModal.classList.remove('active');
-      showToast('Logged out!');
-      setTimeout(()=>location.reload(), 1200);
-    };
-
-    // ====== TOAST ======
-    function showToast(msg) {
-      let toast = document.getElementById('toast');
-      if(!toast) {
-        toast = document.createElement('div');
-        toast.id = 'toast';
-        toast.style.position = 'fixed';
-        toast.style.bottom = '24px';
-        toast.style.left = '50%';
-        toast.style.transform = 'translateX(-50%)';
-        toast.style.background = 'var(--primary-dark)';
-        toast.style.color = '#fff';
-        toast.style.padding = '0.9rem 1.7rem';
-        toast.style.borderRadius = '14px';
-        toast.style.fontWeight = '500';
-        toast.style.fontSize = '1.07rem';
-        toast.style.boxShadow = 'var(--shadow)';
-        toast.style.zIndex = '999';
-        toast.style.transition = "opacity 0.34s";
-        toast.style.opacity = "0";
-        document.body.appendChild(toast);
-      }
-      toast.innerText = msg;
-      toast.style.opacity = "1";
-      setTimeout(()=>{toast.style.opacity="0";}, 1800);
+    function openMap(query) {
+      const url = `https://www.google.com/maps/search/?q=${encodeURIComponent(query)}`;
+      window.open(url, '_blank');
     }
-
-    // ====== THEME TOGGLE ======
-    const themeToggle = document.getElementById('themeToggle');
-    themeToggle.addEventListener('click', ()=>{
-      let theme = document.body.getAttribute('data-theme');
-      if(theme==="light") {
-        document.body.setAttribute('data-theme','dark');
-        themeToggle.innerHTML = `<i class="fa-solid fa-sun"></i>`;
-      } else {
-        document.body.setAttribute('data-theme','light');
-        themeToggle.innerHTML = `<i class="fa-solid fa-moon"></i>`;
-      }
-    });
-
-    // ====== CHAT SUPPORT LOGIC ======
-    const chatModal = document.getElementById('chatModal');
-    const chatInput = document.getElementById('chatInput');
-    const chatInputForm = document.getElementById('chatInputForm');
-    const chatMessagesDiv = document.getElementById('chatMessages');
-    document.getElementById('contactMgrBtn').onclick = openSupportChat;
-    let chatLog = [
-      { sender: "manager", text: "Hi, this is company support! How can we help you?", time: Date.now()-12000 }
-    ];
-    function closeChat() {
-      chatModal.classList.remove('active');
-    }
-    function openSupportChat() {
-      chatModal.classList.add('active');
-      renderChat();
-      setTimeout(()=>{chatInput.focus();},180);
-    }
-    function renderChat() {
-      chatMessagesDiv.innerHTML = "";
-      chatLog.forEach(msg=>{
-        const msgDiv = document.createElement("div");
-        msgDiv.className = "chat-msg " + msg.sender;
-        msgDiv.innerHTML = `
-          <div class="chat-avatar">
-            <i class="fa-solid ${msg.sender==="driver"?"fa-user":"fa-headset"}"></i>
-          </div>
-          <div>
-            <div class="chat-bubble">${escapeHTML(msg.text)}</div>
-            <div class="chat-meta">${formatTimeAgo(Math.max(Date.now()-msg.time,0))}</div>
-          </div>
-        `;
-        chatMessagesDiv.appendChild(msgDiv);
-      });
-      chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
-    }
-    chatInputForm.onsubmit = function(e) {
-      e.preventDefault();
-      const val = chatInput.value.trim();
-      if(!val) return;
-      chatLog.push({ sender: "driver", text: val, time: Date.now() });
-      chatInput.value = "";
-      renderChat();
-      setTimeout(()=>{
-        if(val.match(/(problem|issue|help|support|late|delay|accident|pay|salary|stuck|complaint|lost|urgent|cancel|block|fire|suspend|sick|off)/i)) {
-          chatLog.push({ sender: "manager", text: "Noted. We'll escalate this to your supervisor.", time: Date.now() });
-        } else if(val.match(/hello|hi|hey|morning|good/i)) {
-          chatLog.push({ sender: "manager", text: "Hello! 👋 How can I help you today?", time: Date.now() });
-        } else if(val.match(/thank/i)) {
-          chatLog.push({ sender: "manager", text: "You're welcome! Stay safe out there.", time: Date.now() });
-        } else {
-          chatLog.push({ sender: "manager", text: "Thanks for your message. We'll get back to you shortly.", time: Date.now() });
-        }
-        renderChat();
-      }, 1300);
-    };
-    function escapeHTML(str) {
-      return str.replace(/[&<>'"]/g, function(tag) {
-        const charsToReplace = {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          "'": '&#39;',
-          '"': '&quot;'
-        };
-        return charsToReplace[tag] || tag;
-      });
-    }
-    // On page load, show Orders tab
-    renderOrders();
-    // ESC to close modals
-    window.addEventListener('keydown', (e)=>{
-      if(e.key==="Escape") {
-        profileModal.classList.remove('active');
-        chatModal.classList.remove('active');
-        callModal.classList.remove('active');
-      }
-    });
   </script>
-
-
-</body></html>
+</body>
+</html>

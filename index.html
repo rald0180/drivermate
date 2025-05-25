@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -99,6 +98,9 @@
       box-shadow: var(--shadow);
       cursor: pointer;
       transition: transform 0.2s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
     }
     .essential-item:hover {
       transform: translateY(-2px);
@@ -136,18 +138,18 @@
       <div class="card">
         <div class="card-title">Nearby Essentials</div>
         <div class="essentials-grid">
-          <div class="essential-item" onclick="openMap('Public Toilet, Main St')">
+          <a class="essential-item" href="https://www.google.com/maps/search/?q=Public+Toilet%2C+Main+St" target="_blank" rel="noopener">
             <i class="fas fa-restroom"></i><div>Toilet</div>
-          </div>
-          <div class="essential-item" onclick="openMap('Raincoat Store, River Rd')">
+          </a>
+          <a class="essential-item" href="https://www.google.com/maps/search/?q=Raincoat+Store%2C+River+Rd" target="_blank" rel="noopener">
             <i class="fas fa-cloud-sun-rain"></i><div>Raincoats</div>
-          </div>
-          <div class="essential-item" onclick="openMap('Fuel Station, Elm Ave')">
+          </a>
+          <a class="essential-item" href="https://www.google.com/maps/search/?q=Fuel+Station%2C+Elm+Ave" target="_blank" rel="noopener">
             <i class="fas fa-gas-pump"></i><div>Fuel</div>
-          </div>
-          <div class="essential-item" onclick="openMap('EV Charger, City Plaza')">
+          </a>
+          <a class="essential-item" href="https://www.google.com/maps/search/?q=EV+Charger%2C+City+Plaza" target="_blank" rel="noopener">
             <i class="fas fa-charging-station"></i><div>EV Charging</div>
-          </div>
+          </a>
         </div>
       </div>
     </section>
@@ -186,11 +188,7 @@
         document.getElementById('screen-' + tab.dataset.screen).classList.add('active');
       });
     });
-
-    function openMap(query) {
-      const url = `https://www.google.com/maps/search/?q=${encodeURIComponent(query)}`;
-      window.open(url, '_blank');
-    }
+    // openMap function is no longer needed
   </script>
 </body>
 </html>
